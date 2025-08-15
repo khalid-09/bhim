@@ -1,10 +1,18 @@
 "use client";
 
-import { Button } from "./ui/button";
+import { authClient } from "@/auth-client";
+import { Button } from "../ui/button";
 
 const GoogleSignInButton = () => {
+  const handleClick = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/dashboard",
+    });
+  };
+
   return (
-    <Button>
+    <Button onClick={handleClick}>
       <svg
         aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
