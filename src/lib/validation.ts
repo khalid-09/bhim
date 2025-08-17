@@ -1,6 +1,6 @@
 import { company, quality } from "@/db/schema";
-import { z } from "better-auth";
 import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
 
 export const createCompanySchema = createInsertSchema(company, {
   name: (schema) => schema.min(1, "Company Name is required"),
