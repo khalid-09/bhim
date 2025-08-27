@@ -2,8 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useState, useEffect } from "react";
-import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
+import { useState, useEffect, useTransition } from "react";
+import { CheckIcon, ChevronsUpDownIcon, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
@@ -41,6 +41,7 @@ import {
 } from "@/lib/validation/work-log";
 import { type CompanyFromQuery } from "@/db/schema";
 import { Label } from "../ui/label";
+import { createWorkLog } from "@/actions/create-work-log";
 
 type CreateWorkLogFormProps = {
   onSuccess: () => void;
@@ -55,6 +56,7 @@ const CreateWorkLogForm = ({
   companies = [],
   mode,
 }: CreateWorkLogFormProps) => {
+  const [isPending, startTransition] = useTransition();
   const [selectedCompanyId, setSelectedCompanyId] = useState<string>(
     prefilledCompany?.id || "",
   );
@@ -97,22 +99,24 @@ const CreateWorkLogForm = ({
     }
   }, [selectedCompanyId, setValue, mode]);
 
-  const onSubmit = async (
+  const onSubmit = (
     values: CreateWorkLogSingleCompany | CreateWorkLogDashboard,
   ) => {
-    try {
-      const serverData = {
-        ...values,
-        companyId:
-          mode === "single"
-            ? prefilledCompany!.id
-            : (values as CreateWorkLogDashboard).companyId,
-      };
-      console.log("Submitting:", serverData);
-      onSuccess();
-    } catch (error) {
-      console.error("Error creating work log:", error);
-    }
+    startTransition(async () => {
+      try {
+        const serverData = {
+          ...values,
+          companyId:
+            mode === "single"
+              ? prefilledCompany!.id
+              : (values as CreateWorkLogDashboard).companyId,
+        };
+        await createWorkLog(serverData);
+        onSuccess();
+      } catch (error) {
+        console.error("Error creating work log:", error);
+      }
+    });
   };
 
   return (
@@ -131,6 +135,7 @@ const CreateWorkLogForm = ({
                       <Button
                         variant="outline"
                         role="combobox"
+                        disabled={isPending}
                         className={cn(
                           "w-full justify-between",
                           !field.value && "text-muted-foreground",
@@ -206,8 +211,9 @@ const CreateWorkLogForm = ({
                   <FormControl>
                     <Button
                       variant="outline"
+                      disabled={isPending}
                       className={cn(
-                        "w-full bg-white pl-3 text-left text-sm font-normal",
+                        "w-full pl-3 text-left text-sm font-normal",
                         !field.value && "text-muted-foreground",
                       )}
                     >
@@ -246,7 +252,7 @@ const CreateWorkLogForm = ({
                     <Button
                       variant="outline"
                       role="combobox"
-                      disabled={!selectedCompanyId}
+                      disabled={!selectedCompanyId || isPending}
                       className={cn(
                         "w-full justify-between bg-white",
                         !field.value && "text-muted-foreground",
@@ -313,7 +319,11 @@ const CreateWorkLogForm = ({
               >
                 <FormLabel>Machine No.</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter machine no." {...field} />
+                  <Input
+                    disabled={isPending}
+                    placeholder="Enter machine no."
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -332,7 +342,11 @@ const CreateWorkLogForm = ({
               >
                 <FormLabel>Taar</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter taar." {...field} />
+                  <Input
+                    disabled={isPending}
+                    placeholder="Enter taar."
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -347,15 +361,20 @@ const CreateWorkLogForm = ({
             <FormItem>
               <FormLabel>Karigar Name</FormLabel>
               <FormControl>
-                <Input placeholder="Enter karigar name..." {...field} />
+                <Input
+                  disabled={isPending}
+                  placeholder="Enter karigar name..."
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button type="submit" className="w-full">
-          Create Work Log
+        <Button type="submit" disabled={isPending} className="w-full">
+          {isPending && <Loader2 className="mr-2 animate-spin" />} Create Work
+          Log
         </Button>
       </form>
     </Form>
