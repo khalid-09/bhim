@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/navbar";
-import { Figtree } from "next/font/google";
+import { Figtree, Geist_Mono } from "next/font/google";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -13,6 +14,11 @@ const figtree = Figtree({
   weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
+const geist = Geist_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -21,8 +27,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${figtree.className} antialiased`}>
-        <Navbar />
-        <main>{children}</main>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Navbar />
+          <main>{children}</main>
+        </ThemeProvider>
       </body>
     </html>
   );
