@@ -62,9 +62,9 @@ export function CompaniesDataTable<TData extends CompanyFromQuery, TValue>({
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between border-b border-gray-200 p-6">
+      <div className="border-border flex items-center justify-between border-b p-6">
         <div className="flex w-full justify-between gap-4 max-sm:flex-col sm:items-center">
-          <h1 className="text-xl font-semibold text-gray-900">All Companies</h1>
+          <h1 className="text-xl font-semibold">All Companies</h1>
           <div className="relative">
             <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <Input
@@ -75,7 +75,7 @@ export function CompaniesDataTable<TData extends CompanyFromQuery, TValue>({
               onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
               }
-              className="w-64 border-gray-300 pl-9 text-sm focus:border-blue-500 focus:ring-blue-500"
+              className="border-border w-64 pl-9 text-sm focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
         </div>
@@ -87,14 +87,11 @@ export function CompaniesDataTable<TData extends CompanyFromQuery, TValue>({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
                 key={headerGroup.id}
-                className="border-b border-gray-200 hover:bg-transparent"
+                className="border-border border-b hover:bg-transparent"
               >
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead
-                      key={header.id}
-                      className="h-12 bg-gray-50/50 px-6"
-                    >
+                    <TableHead key={header.id} className="bg-muted h-12 px-6">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -113,7 +110,7 @@ export function CompaniesDataTable<TData extends CompanyFromQuery, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="cursor-pointer border-b border-gray-100 transition-colors last:border-b-0 hover:bg-gray-50"
+                  className="border-border cursor-pointer border-b transition-colors last:border-b-0"
                   onClick={() => handleRowClick(row)}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -142,8 +139,8 @@ export function CompaniesDataTable<TData extends CompanyFromQuery, TValue>({
       </ScrollArea>
 
       {table.getPageCount() > 1 && (
-        <div className="flex items-center justify-between gap-3 border-t border-gray-200 bg-gray-50/30 px-6 py-4 max-md:flex-col">
-          <div className="text-sm text-gray-600">
+        <div className="border-border bg-muted flex items-center justify-between gap-3 border-t px-6 py-4 max-md:flex-col">
+          <div className="text-sm">
             Showing{" "}
             {table.getState().pagination.pageIndex *
               table.getState().pagination.pageSize +
@@ -180,7 +177,7 @@ export function CompaniesDataTable<TData extends CompanyFromQuery, TValue>({
                       variant={isActive ? "default" : "outline"}
                       size="sm"
                       onClick={() => table.setPageIndex(pageIndex - 1)}
-                      className={`h-8 w-8 text-sm ${isActive ? "bg-blue-600 hover:bg-blue-700" : ""}`}
+                      className={`h-8 w-8 text-sm ${isActive ? "bg-blue-600 hover:bg-blue-700 dark:text-white" : ""}`}
                     >
                       {pageIndex}
                     </Button>

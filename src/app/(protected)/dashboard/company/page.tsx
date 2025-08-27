@@ -37,15 +37,13 @@ const Page = async () => {
   });
 
   return (
-    <div className="w-full bg-gray-50 px-4">
-      <section className="border-b border-gray-200 bg-white">
+    <div className="w-full px-4">
+      <section className="border-border bg-card border-b">
         <div className="mx-auto max-w-7xl py-6">
           <div className="flex justify-between gap-3 max-sm:flex-col sm:items-center">
             <div>
-              <h1 className="text-2xl font-semibold text-gray-900">
-                Companies
-              </h1>
-              <p className="mt-1 text-sm text-gray-600">
+              <h1 className="text-2xl font-semibold">Companies</h1>
+              <p className="text-muted-foreground mt-1 text-sm">
                 Manage your companies and their qualities
               </p>
             </div>
@@ -55,7 +53,7 @@ const Page = async () => {
       </section>
       <section className="mx-auto mb-10 max-w-7xl space-y-4">
         <CompanyStats companies={companies} />
-        <div className="border border-gray-200 bg-white shadow-sm">
+        <div className="border-border bg-card border shadow-sm">
           <CompaniesDataTable columns={columns} data={companies} />
         </div>
       </section>

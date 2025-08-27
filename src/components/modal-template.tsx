@@ -63,9 +63,7 @@ const ModalTemplate = ({
       {(!isControlled || modalTrigger) && (
         <DialogTrigger asChild={triggerAsChild}>{modalTrigger}</DialogTrigger>
       )}
-      <DialogContent
-        className={cn("text-dark-primary mb-0 gap-0 p-0", className)}
-      >
+      <DialogContent className={cn("bg-muted mb-0 gap-0 p-0", className)}>
         {hideScrollAreaOnMobile ? (
           <>
             <div className="max-h-[90vh] sm:hidden">{content}</div>
