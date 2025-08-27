@@ -37,7 +37,7 @@ const Page = async () => {
   });
 
   return (
-    <div className="min-h-screen w-full bg-gray-50 px-4">
+    <div className="w-full bg-gray-50 px-4">
       <section className="border-b border-gray-200 bg-white">
         <div className="mx-auto max-w-7xl py-6">
           <div className="flex justify-between gap-3 max-sm:flex-col sm:items-center">
@@ -53,7 +53,7 @@ const Page = async () => {
           </div>
         </div>
       </section>
-      <section className="mx-auto mb-4 max-w-7xl space-y-4">
+      <section className="mx-auto mb-10 max-w-7xl space-y-4">
         <CompanyStats companies={companies} />
         <div className="border border-gray-200 bg-white shadow-sm">
           <CompaniesDataTable columns={columns} data={companies} />
