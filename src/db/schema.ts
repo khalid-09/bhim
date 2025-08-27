@@ -198,3 +198,17 @@ export type NewWorkLog = typeof workLog.$inferInsert;
 export type CompanyFromQuery = Omit<Company, "updatedAt"> & {
   qualities: Omit<Quality, "createdAt" | "updatedAt">[];
 };
+
+export type WorkLogFromQuery = Omit<
+  WorkLog,
+  "companyId" | "qualityId" | "createdAt"
+> & {
+  company: {
+    id: Company["id"];
+    name: Company["name"];
+  };
+  quality: {
+    id: Quality["id"];
+    name: Company["name"];
+  };
+};
