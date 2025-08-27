@@ -13,8 +13,18 @@ export const createCompanySchema = createInsertSchema(company, {
 
 export const createQualitySchema = createInsertSchema(quality, {
   name: (schema) => schema.min(1, "Quality Name is required"),
-  payableRate: (schema) => schema.min(1, "Payable Rate is required"),
-  receivableRate: (schema) => schema.min(1, "Receivable Rate is required"),
+  payableRate: z
+    .string()
+    .min(1, "Payable Rate is required")
+    .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+      message: "Invalid rate.",
+    }),
+  receivableRate: z
+    .string()
+    .min(1, "Receivable Rate is required")
+    .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+      message: "Invalid rate.",
+    }),
 }).omit({
   id: true,
   companyId: true,
