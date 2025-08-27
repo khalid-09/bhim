@@ -5,6 +5,7 @@ import {
   boolean,
   decimal,
   uuid,
+  index,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -81,44 +82,60 @@ export const company = pgTable("company", {
     .notNull(),
 });
 
-export const quality = pgTable("quality", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name").notNull(),
-  payableRate: decimal("payable_rate", { precision: 10, scale: 2 }).notNull(),
-  receivableRate: decimal("receivable_rate", {
-    precision: 10,
-    scale: 2,
-  }).notNull(),
-  companyId: uuid("company_id")
-    .notNull()
-    .references(() => company.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updated_at")
-    .$defaultFn(() => new Date())
-    .notNull(),
-});
+export const quality = pgTable(
+  "quality",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    name: text("name").notNull(),
+    payableRate: decimal("payable_rate", { precision: 10, scale: 2 }).notNull(),
+    receivableRate: decimal("receivable_rate", {
+      precision: 10,
+      scale: 2,
+    }).notNull(),
+    companyId: uuid("company_id")
+      .notNull()
+      .references(() => company.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: timestamp("updated_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+  },
+  (table) => [index("idx_quality_companyid").on(table.companyId)],
+);
 
-export const workLog = pgTable("work_log", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  date: timestamp("date").notNull(),
-  machineNo: text("machine_no").notNull(),
-  taar: decimal("taar", { precision: 10, scale: 3 }).notNull(),
-  karigarName: text("karigar_name").notNull(),
-  companyId: uuid("company_id")
-    .notNull()
-    .references(() => company.id, { onDelete: "cascade" }),
-  qualityId: uuid("quality_id")
-    .notNull()
-    .references(() => quality.id, { onDelete: "cascade" }),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at")
-    .$defaultFn(() => new Date())
-    .notNull(),
-});
+export const workLog = pgTable(
+  "work_log",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    date: timestamp("date").notNull(),
+    machineNo: text("machine_no").notNull(),
+    taar: decimal("taar", { precision: 10, scale: 3 }).notNull(),
+    karigarName: text("karigar_name").notNull(),
+    companyId: uuid("company_id")
+      .notNull()
+      .references(() => company.id, { onDelete: "cascade" }),
+    qualityId: uuid("quality_id")
+      .notNull()
+      .references(() => quality.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("idx_worklog_companyid").on(table.companyId),
+    index("idx_worklog_karigarname").on(table.karigarName),
+    index("idx_worklog_date").on(table.date),
+    index("idx_worklog_userid").on(table.userId),
+    // Composite Query Indexes
+    index("idx_worklog_company_date").on(table.companyId, table.date),
+    index("idx_worklog_karigar_date").on(table.karigarName, table.date),
+  ],
+);
 
 // Relations
 export const userRelations = relations(user, ({ many }) => ({

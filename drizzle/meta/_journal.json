@@ -22,6 +22,13 @@
       "when": 1756283048107,
       "tag": "0002_tan_tyger_tiger",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1756294843226,
+      "tag": "0003_high_overlord",
+      "breakpoints": true
     }
   ]
 }
