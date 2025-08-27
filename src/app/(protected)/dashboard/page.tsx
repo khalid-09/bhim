@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import LogoutButton from "@/components/auth/logout-button";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -10,12 +9,7 @@ const Page = async () => {
 
   if (!session?.session || !session.user) redirect("/");
 
-  return (
-    <div>
-      Dashboard Page
-      <LogoutButton />
-    </div>
-  );
+  return <div>Dashboard Page</div>;
 };
 
 export default Page;
