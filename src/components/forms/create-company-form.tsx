@@ -18,7 +18,7 @@ import { Trash2, Plus, Loader2 } from "lucide-react";
 import {
   createCompanyWithQualitiesSchema,
   type CreateCompanyWithQualitiesSchema,
-} from "@/lib/validation";
+} from "@/lib/validation/company";
 import { createCompany } from "@/actions/create-company";
 import { useTransition } from "react";
 import { cn } from "@/lib/utils";
@@ -29,7 +29,7 @@ import { editCompany } from "@/actions/edit-company";
 
 type CreateCompanyFormProps = {
   companyToEdit?: CompanyFromQuery;
-  onSuccess?: () => void;
+  onSuccess: () => void;
 };
 
 const CreateCompanyForm = ({

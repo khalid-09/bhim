@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import {
   createCompanyWithQualitiesSchema,
   type CreateCompanyWithQualitiesSchema,
-} from "@/lib/validation";
+} from "@/lib/validation/company";
 import { headers } from "next/headers";
 import { db } from "..";
 import { company, quality } from "@/db/schema";

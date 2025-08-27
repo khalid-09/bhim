@@ -22,10 +22,8 @@ export const deleteCompany = async (companyId: string) => {
     revalidatePath("/dashboard/company");
     revalidatePath(`/dashboard/company/${companyId}`);
 
-    // Return a success message.
     return { message: "Company deleted successfully!" };
   } catch (error) {
-    // Log and return an error message if the deletion fails.
     console.error("Error deleting company:", error);
     return { message: "Failed to delete company" };
   }
