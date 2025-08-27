@@ -31,4 +31,6 @@ export type CreateWorkLogSingleCompany = z.infer<
 export type CreateWorkLogDashboard = z.infer<
   typeof createWorkLogDashboardSchema
 >;
-export type CreateWorkLogServer = z.infer<typeof createWorkLogServerSchema>;
+export type CreateWorkLogServerSchema = z.infer<
+  typeof createWorkLogServerSchema
+>;

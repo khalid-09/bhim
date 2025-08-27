@@ -5,6 +5,9 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import CompanyHeader from "@/components/company-header";
 import CreateWorkLog from "@/components/create-work-log";
+import { Suspense } from "react";
+import CompanyWorkLog from "@/components/company-work-log";
+import { Loader2 } from "lucide-react";
 
 type IndividualCompanyProps = {
   params: Promise<{ slug: string }>;
@@ -46,12 +49,12 @@ const IndividualCompanyPage = async ({ params }: IndividualCompanyProps) => {
   return (
     <>
       <CompanyHeader company={company} />
-      <section className="border-b border-gray-200 bg-white px-4">
+      <section className="border-border bg-card border-b px-4">
         <div className="mx-auto max-w-7xl py-4">
           <div className="flex justify-between gap-3 max-sm:flex-col sm:items-center">
             <div>
-              <h3 className="text-xl font-semibold text-gray-900">Work log</h3>
-              <p className="mt-1 text-sm text-gray-600">
+              <h3 className="text-xl font-semibold">Work log</h3>
+              <p className="text-muted-foreground mt-1 text-sm">
                 Add work done in this company.
               </p>
             </div>
@@ -59,6 +62,15 @@ const IndividualCompanyPage = async ({ params }: IndividualCompanyProps) => {
           </div>
         </div>
       </section>
+      <Suspense
+        fallback={
+          <div className="mx-auto flex w-full max-w-7xl items-center justify-center">
+            <Loader2 className="mt-4" />
+          </div>
+        }
+      >
+        <CompanyWorkLog user={session.user} slug={slug} />
+      </Suspense>
     </>
   );
 };
