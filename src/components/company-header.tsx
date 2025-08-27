@@ -18,7 +18,7 @@ type CompanyHeaderProps = {
 
 const CompanyHeader = ({ company }: CompanyHeaderProps) => {
   return (
-    <section className="space-y-4 border-b px-4 py-6">
+    <section className="space-y-4 border-b bg-white px-4 py-6">
       <header className="mx-auto flex w-full max-w-7xl items-start justify-between gap-3">
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold md:text-3xl lg:text-4xl">
