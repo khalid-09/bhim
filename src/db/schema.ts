@@ -69,7 +69,7 @@ export const verification = pgTable("verification", {
 // App tables
 export const company = pgTable("company", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name").notNull(),
+  name: text("name").notNull().unique(),
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
@@ -176,3 +176,8 @@ export type NewVerification = typeof verification.$inferInsert;
 export type NewCompany = typeof company.$inferInsert;
 export type NewQuality = typeof quality.$inferInsert;
 export type NewWorkLog = typeof workLog.$inferInsert;
+
+// Query Types
+export type CompanyFromQuery = Omit<Company, "updatedAt"> & {
+  qualities: Omit<Quality, "createdAt" | "updatedAt">[];
+};

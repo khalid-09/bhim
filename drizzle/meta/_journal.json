@@ -15,6 +15,13 @@
       "when": 1755265142041,
       "tag": "0001_overconfident_betty_ross",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1756283048107,
+      "tag": "0002_tan_tyger_tiger",
+      "breakpoints": true
     }
   ]
 }
