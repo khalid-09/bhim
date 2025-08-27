@@ -28,10 +28,10 @@ import type { CompanyFromQuery } from "@/db/schema";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { useState } from "react";
 
-interface DataTableProps<TData, TValue> {
+type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-}
+};
 
 export function CompaniesDataTable<TData extends CompanyFromQuery, TValue>({
   columns,
