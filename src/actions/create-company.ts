@@ -37,15 +37,12 @@ export const createCompany = async (data: CreateCompanyWithQualitiesSchema) => {
       .returning();
 
     // Insert company qualities
-    await db
-      .insert(quality)
-      .values(
-        parsedInput.data.qualities.map((q) => ({
-          ...q,
-          companyId: newCompany?.id || "",
-        })),
-      )
-      .returning();
+    await db.insert(quality).values(
+      parsedInput.data.qualities.map((q) => ({
+        ...q,
+        companyId: newCompany?.id || "",
+      })),
+    );
 
     revalidatePath("/dashboard/company");
     revalidatePath(`/dashboard/company/${newCompany?.id}`);
