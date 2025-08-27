@@ -13,21 +13,38 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trash2, Plus } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Trash2, Plus, Loader2 } from "lucide-react";
 import {
   createCompanyWithQualitiesSchema,
   type CreateCompanyWithQualitiesSchema,
 } from "@/lib/validation";
+import { createCompany } from "@/actions/create-company";
+import { useTransition } from "react";
+import { cn } from "@/lib/utils";
+import { ScrollArea } from "../ui/scroll-area";
+import { useIsMobile } from "@/hooks/use-mobile";
+import type { CompanyFromQuery } from "@/db/schema";
+import { editCompany } from "@/actions/edit-company";
 
-export function CreateCompanyForm() {
+type CreateCompanyFormProps = {
+  companyToEdit?: CompanyFromQuery;
+  onSuccess?: () => void;
+};
+
+const CreateCompanyForm = ({
+  companyToEdit,
+  onSuccess,
+}: CreateCompanyFormProps) => {
+  const isMobile = useIsMobile();
+  const [isPending, startTransition] = useTransition();
   const form = useForm<CreateCompanyWithQualitiesSchema>({
     resolver: zodResolver(createCompanyWithQualitiesSchema),
     defaultValues: {
       company: {
-        name: "",
+        name: companyToEdit?.name ?? "",
       },
-      qualities: [
+      qualities: companyToEdit?.qualities ?? [
         {
           name: "",
           payableRate: "",
@@ -37,65 +54,91 @@ export function CreateCompanyForm() {
     },
   });
 
+  const {
+    control,
+    formState: { errors },
+    getValues,
+    handleSubmit,
+  } = form;
+
+  const qualities = getValues("qualities");
+
   const { fields, append, remove } = useFieldArray({
-    control: form.control,
+    control: control,
     name: "qualities",
   });
 
-  const onSubmit = async (values: CreateCompanyWithQualitiesSchema) => {
-    console.log(res);
+  const onSubmit = (values: CreateCompanyWithQualitiesSchema) => {
+    startTransition(async () => {
+      try {
+        if (companyToEdit?.id) {
+          await editCompany(values, companyToEdit.id);
+          return;
+        }
+
+        await createCompany(values);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        onSuccess?.();
+      }
+    });
   };
 
   return (
-    <div className="mx-auto max-w-2xl p-6">
+    <div className="mx-auto max-w-2xl px-4 pb-4">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Company Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <FormField
-                control={form.control}
-                name="company.name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Company Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter company name" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Enter the name of your company.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+          <FormField
+            control={control}
+            name="company.name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Company Name</FormLabel>
+                <FormControl>
+                  <Input className="bg-white" disabled={isPending} {...field} />
+                </FormControl>
+                <FormDescription>
+                  Enter the name of your company.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex items-center justify-between">
+            <h5>Qualities</h5>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="bg-white"
+              onClick={() =>
+                append({
+                  name: "",
+                  payableRate: "",
+                  receivableRate: "",
+                })
+              }
+            >
+              <Plus className="mr-1" />
+              Add Quality
+            </Button>
+          </div>
+          <ScrollArea
+            className={cn(
+              isMobile
+                ? qualities.length >= 2 && "h-[450px]"
+                : qualities.length >= 3 && "h-[450px]",
+            )}
+          >
+            {fields.map((field, index) => {
+              const hasPayableError = errors.qualities?.[index]?.payableRate;
+              const hasReceivableError =
+                errors.qualities?.[index]?.receivableRate;
+              const hasNameError = errors.qualities?.[index]?.name;
 
-          <Card className="p-2 py-3">
-            <CardHeader className="flex items-center justify-between px-3">
-              <CardTitle>Qualities</CardTitle>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  append({
-                    name: "",
-                    payableRate: "",
-                    receivableRate: "",
-                  })
-                }
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                Add Quality
-              </Button>
-            </CardHeader>
-            <CardContent className="space-y-4 p-2">
-              {fields.map((field, index) => (
-                <Card key={field.id} className="p-4">
+              return (
+                <Card key={field.id} className="mb-4 gap-3 p-4 last:mb-0">
                   <div className="flex items-start justify-between">
                     <h4 className="text-sm font-medium">Quality {index + 1}</h4>
                     {fields.length > 1 && (
@@ -110,53 +153,53 @@ export function CreateCompanyForm() {
                       </Button>
                     )}
                   </div>
-
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     <FormField
-                      control={form.control}
+                      control={control}
                       name={`qualities.${index}.name`}
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem
+                          className={cn(
+                            hasPayableError || hasReceivableError ? "mb-6" : "",
+                          )}
+                        >
                           <FormLabel>Quality Name</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Enter quality name"
-                              {...field}
-                            />
+                            <Input disabled={isPending} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-
                     <FormField
-                      control={form.control}
+                      control={control}
                       name={`qualities.${index}.payableRate`}
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem
+                          className={cn(
+                            hasNameError || hasReceivableError ? "mb-6" : "",
+                          )}
+                        >
                           <FormLabel>Payable Rate</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Enter payable rate"
-                              {...field}
-                            />
+                            <Input disabled={isPending} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-
                     <FormField
-                      control={form.control}
+                      control={control}
                       name={`qualities.${index}.receivableRate`}
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem
+                          className={cn(
+                            hasNameError || hasPayableError ? "mb-6" : "",
+                          )}
+                        >
                           <FormLabel>Receivable Rate</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Enter receivable rate"
-                              {...field}
-                            />
+                            <Input disabled={isPending} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -164,15 +207,17 @@ export function CreateCompanyForm() {
                     />
                   </div>
                 </Card>
-              ))}
-            </CardContent>
-          </Card>
-
-          <Button type="submit" className="w-full">
-            Create Company
+              );
+            })}
+          </ScrollArea>
+          <Button type="submit" disabled={isPending} className="w-full">
+            {isPending && <Loader2 className="mr-2 animate-spin" />}{" "}
+            {companyToEdit?.id ? "Edit" : "Create"} Company
           </Button>
         </form>
       </Form>
     </div>
   );
-}
+};
+
+export default CreateCompanyForm;
