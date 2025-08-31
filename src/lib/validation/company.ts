@@ -25,12 +25,15 @@ export const createQualitySchema = createInsertSchema(quality, {
     .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
       message: "Invalid rate.",
     }),
-}).omit({
-  id: true,
-  companyId: true,
-  createdAt: true,
-  updatedAt: true,
-});
+})
+  .omit({
+    companyId: true,
+    createdAt: true,
+    updatedAt: true,
+  })
+  .extend({
+    id: z.uuid().optional(),
+  });
 
 export const createCompanyWithQualitiesSchema = z.object({
   company: createCompanySchema,
