@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import type { CompanyFromQuery } from "@/db/schema";
 import { Button } from "./ui/button";
 import { ArrowUpDownIcon } from "lucide-react";
+import { getQualityColor } from "@/lib/utils";
 
 export const columns: ColumnDef<CompanyFromQuery>[] = [
   {
@@ -44,24 +45,6 @@ export const columns: ColumnDef<CompanyFromQuery>[] = [
       ) as CompanyFromQuery["qualities"];
       const rowIndex = row.index;
 
-      const getQualityColor = (index: number) => {
-        const adjustedIndex = (index + rowIndex) % 7;
-
-        if (adjustedIndex === 0)
-          return "bg-blue-100 text-blue-800 hover:bg-blue-200";
-        if (adjustedIndex === 1)
-          return "bg-orange-100 text-orange-800 hover:bg-orange-200";
-        if (adjustedIndex === 2)
-          return "bg-purple-100 text-purple-800 hover:bg-purple-200";
-        if (adjustedIndex === 3)
-          return "bg-green-100 text-green-800 hover:bg-green-200";
-        if (adjustedIndex === 4)
-          return "bg-indigo-100 text-indigo-800 hover:bg-indigo-200";
-        if (adjustedIndex === 5)
-          return "bg-pink-100 text-pink-800 hover:bg-pink-200";
-        return "bg-gray-100 text-gray-800 hover:bg-gray-200";
-      };
-
       return (
         <>
           <div className="hidden max-w-md flex-wrap gap-1.5 lg:flex">
@@ -69,7 +52,7 @@ export const columns: ColumnDef<CompanyFromQuery>[] = [
               <Badge
                 key={quality.id}
                 variant="secondary"
-                className={`border-0 px-2.5 py-1 text-xs font-medium ${getQualityColor(index)}`}
+                className={`border-0 px-2.5 py-1 text-xs font-medium ${getQualityColor(index, rowIndex)}`}
               >
                 {quality.name}
               </Badge>
@@ -89,7 +72,7 @@ export const columns: ColumnDef<CompanyFromQuery>[] = [
               <Badge
                 key={quality.id}
                 variant="secondary"
-                className={`border-0 px-2.5 py-1 text-xs font-medium ${getQualityColor(index)}`}
+                className={`border-0 px-2.5 py-1 text-xs font-medium ${getQualityColor(index, rowIndex)}`}
               >
                 {quality.name}
               </Badge>
@@ -109,7 +92,7 @@ export const columns: ColumnDef<CompanyFromQuery>[] = [
               <Badge
                 key={quality.id}
                 variant="secondary"
-                className={`border-0 px-2.5 py-1 text-xs font-medium ${getQualityColor(index)}`}
+                className={`border-0 px-2.5 py-1 text-xs font-medium ${getQualityColor(index, rowIndex)}`}
               >
                 {quality.name}
               </Badge>
@@ -129,7 +112,7 @@ export const columns: ColumnDef<CompanyFromQuery>[] = [
               <Badge
                 key={quality.id}
                 variant="secondary"
-                className={`border-0 px-2.5 py-1 text-xs font-medium ${getQualityColor(index)}`}
+                className={`border-0 px-2.5 py-1 text-xs font-medium ${getQualityColor(index, rowIndex)}`}
               >
                 {quality.name}
               </Badge>
