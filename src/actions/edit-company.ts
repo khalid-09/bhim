@@ -7,9 +7,9 @@ import {
 } from "@/lib/validation/company";
 import { headers } from "next/headers";
 import { db } from "..";
-import { company, quality } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
+import { company, quality } from "@/db/schema";
 
 export const editCompany = async (
   data: CreateCompanyWithQualitiesSchema,
@@ -39,17 +39,27 @@ export const editCompany = async (
       .update(company)
       .set({
         name: parsedInput.data.company.name,
+        updatedAt: new Date(),
       })
       .where(eq(company.id, companyId));
 
-    await db.delete(quality).where(eq(quality.companyId, companyId));
-
-    await db.insert(quality).values(
-      parsedInput.data.qualities.map((q) => ({
-        ...q,
-        companyId: companyId,
-      })),
-    );
+    for (const q of parsedInput.data.qualities) {
+      await db
+        .insert(quality)
+        .values({
+          ...q,
+          companyId,
+        })
+        .onConflictDoUpdate({
+          target: quality.id,
+          set: {
+            name: q.name,
+            receivableRate: q.receivableRate,
+            payableRate: q.payableRate,
+            updatedAt: new Date(),
+          },
+        });
+    }
 
     revalidatePath(`/dashboard/company/${companyId}`);
   } catch (error) {
