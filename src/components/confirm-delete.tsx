@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 
 type ConfirmDeleteProps = {
   title: string;
-  modalTrigger: React.ReactNode | string;
+  modalTrigger?: React.ReactNode | string;
   onClick?: () => void;
   text: string;
   open?: boolean;
@@ -33,7 +33,7 @@ const ConfirmDelete = ({
       {...dialogProps}
       classNameTitle="font-cabinet-grotesk"
       title={title}
-      triggerAsChild
+      triggerAsChild={!!modalTrigger}
       modalTrigger={modalTrigger}
     >
       <div className="mx-5 space-y-5 border-t pt-5 pb-5.5">
