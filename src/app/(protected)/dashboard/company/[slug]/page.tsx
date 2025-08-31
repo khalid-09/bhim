@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import CompanyHeader from "@/components/company-header";
 import CreateWorkLog from "@/components/create-work-log";
 import { Suspense } from "react";
-import CompanyWorkLog from "@/components/company-work-log";
+import CompanyWorkLogWrapper from "@/components/company-work-log-wrapper";
 import { Loader2 } from "lucide-react";
 
 type IndividualCompanyProps = {
@@ -69,7 +69,7 @@ const IndividualCompanyPage = async ({ params }: IndividualCompanyProps) => {
           </div>
         }
       >
-        <CompanyWorkLog user={session.user} slug={slug} />
+        <CompanyWorkLogWrapper user={session.user} slug={slug} />
       </Suspense>
     </>
   );
