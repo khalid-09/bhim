@@ -1,41 +1,16 @@
-import type { User } from "better-auth";
-import { db } from "..";
+"use client";
+
+import type { WorkLogFromQuery } from "@/db/schema";
+import { createWorkLogColumns } from "./work-log-column";
 import { WorkLogDataTable } from "./work-log-data-table";
-import { columns } from "./work-log-column";
 import CompanyWorkLogStats from "./company-work-log-stats";
 
-type CompanyWorkLogProps = {
-  user: User;
-  slug: string;
+type CompanyWorkLog = {
+  workLog: WorkLogFromQuery[];
 };
 
-const CompanyWorkLog = async ({ user, slug }: CompanyWorkLogProps) => {
-  const workLog = await db.query.workLog.findMany({
-    columns: {
-      qualityId: false,
-      companyId: false,
-      createdAt: false,
-    },
-    where: (workLog, { eq, and }) =>
-      and(eq(workLog.userId, user.id), eq(workLog.companyId, slug)),
-    with: {
-      company: {
-        columns: {
-          name: true,
-          id: true,
-        },
-      },
-      quality: {
-        columns: {
-          name: true,
-          id: true,
-          payableRate: true,
-          receivableRate: true,
-        },
-      },
-    },
-    orderBy: (workLog, { desc }) => [desc(workLog.createdAt)],
-  });
+const CompanyWorkLog = ({ workLog }: CompanyWorkLog) => {
+  const columns = createWorkLogColumns("single");
 
   return (
     <>
