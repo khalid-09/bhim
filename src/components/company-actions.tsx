@@ -28,6 +28,7 @@ const CompanyActions = ({ company }: CompanyActionsProps) => {
     });
 
     router.push("/dashboard/company");
+    router.refresh();
   };
 
   return (
