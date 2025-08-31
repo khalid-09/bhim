@@ -37,8 +37,8 @@ const Page = async () => {
   });
 
   return (
-    <div className="w-full px-4">
-      <section className="border-border bg-card border-b">
+    <>
+      <section className="border-border bg-card border-b px-4">
         <div className="mx-auto max-w-7xl py-6">
           <div className="flex justify-between gap-3 max-sm:flex-col sm:items-center">
             <div>
@@ -51,13 +51,15 @@ const Page = async () => {
           </div>
         </div>
       </section>
-      <section className="mx-auto mb-10 max-w-7xl space-y-4">
-        <CompanyStats companies={companies} />
-        <div className="border-border bg-card border shadow-sm">
-          <CompaniesDataTable columns={columns} data={companies} />
+      <section className="px-4">
+        <div className="mx-auto mb-10 max-w-7xl space-y-4">
+          <CompanyStats companies={companies} />
+          <div className="border-border bg-card border shadow-sm">
+            <CompaniesDataTable columns={columns} data={companies} />
+          </div>
         </div>
       </section>
-    </div>
+    </>
   );
 };
 
