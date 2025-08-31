@@ -203,7 +203,7 @@ export function WorkLogFilters<TData extends WorkLogFromQuery>({
   const activeFiltersCount = table.getState().columnFilters.length;
 
   const FiltersContent = () => (
-    <div className="space-y-4 p-4">
+    <div className="space-y-4">
       {/* Date Range Filter */}
       <div className="space-y-2">
         <label className="text-sm font-medium">Date Range</label>
@@ -563,7 +563,7 @@ function MobileDateRangePicker({
           disabled={(date) => date > new Date()}
         />
       </CardContent>
-      <CardFooter className="flex gap-2 pb-3">
+      <CardFooter className="flex gap-2 px-3 pb-3">
         <Button
           variant="outline"
           onClick={() => {
