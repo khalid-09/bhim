@@ -3,7 +3,7 @@ import ThemeToggle from "./theme-toggle";
 
 const Navbar = () => {
   return (
-    <header className="border-border sticky top-0 z-50 border-b px-4 py-6">
+    <header className="border-border bg-background sticky top-0 z-50 border-b px-4 py-6">
       <div className="mx-auto flex max-w-7xl items-center justify-between">
         <p>
           <Link href="/">BHIM</Link>
