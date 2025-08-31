@@ -205,6 +205,7 @@ export type WorkLogFromQuery = Omit<
   company: {
     id: Company["id"];
     name: Company["name"];
+    qualities: Omit<Quality, "createdAt" | "updatedAt" | "companyId">[];
   };
   quality: {
     id: Quality["id"];
