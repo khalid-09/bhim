@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${figtree.className} antialiased`}>
+      <body className={`${geist.className} antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
