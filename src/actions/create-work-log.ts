@@ -33,7 +33,6 @@ export const createWorkLog = async (data: CreateWorkLogServerSchema) => {
       userId: session.user.id,
     });
 
-    revalidatePath("/dashboard/company");
     revalidatePath(`/dashboard/company/${parsedInput.data.companyId}`);
   } catch (error) {
     console.error("Error creating company:", error);
