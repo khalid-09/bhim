@@ -46,6 +46,7 @@ const CreateCompanyForm = ({
       },
       qualities: companyToEdit?.qualities ?? [
         {
+          id: undefined,
           name: "",
           payableRate: "",
           receivableRate: "",
@@ -75,7 +76,6 @@ const CreateCompanyForm = ({
           await editCompany(values, companyToEdit.id);
           return;
         }
-
         await createCompany(values);
       } catch (error) {
         console.error(error);
@@ -111,6 +111,7 @@ const CreateCompanyForm = ({
               type="button"
               variant="outline"
               size="sm"
+              disabled={isPending}
               className="bg-white"
               onClick={() =>
                 append({
@@ -160,7 +161,8 @@ const CreateCompanyForm = ({
                       render={({ field }) => (
                         <FormItem
                           className={cn(
-                            hasPayableError || hasReceivableError ? "mb-6" : "",
+                            (hasPayableError || hasReceivableError) &&
+                              "md:mb-6",
                           )}
                         >
                           <FormLabel>Quality Name</FormLabel>
@@ -177,7 +179,7 @@ const CreateCompanyForm = ({
                       render={({ field }) => (
                         <FormItem
                           className={cn(
-                            hasNameError || hasReceivableError ? "mb-6" : "",
+                            (hasNameError || hasReceivableError) && "md:mb-6",
                           )}
                         >
                           <FormLabel>Payable Rate</FormLabel>
@@ -194,7 +196,7 @@ const CreateCompanyForm = ({
                       render={({ field }) => (
                         <FormItem
                           className={cn(
-                            hasNameError || hasPayableError ? "mb-6" : "",
+                            (hasNameError || hasPayableError) && "md:mb-6",
                           )}
                         >
                           <FormLabel>Receivable Rate</FormLabel>
