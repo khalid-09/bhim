@@ -26,7 +26,7 @@ type ModalTemplateProps = {
 const ModalTemplate = ({
   title,
   children,
-  modalTrigger = "Open",
+  modalTrigger,
   triggerAsChild,
   className,
   classNameTitle,
