@@ -1,0 +1,1 @@
+DROP INDEX "uniq_quality_company_name";

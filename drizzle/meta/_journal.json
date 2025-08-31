@@ -29,6 +29,20 @@
       "when": 1756294843226,
       "tag": "0003_high_overlord",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1756579054021,
+      "tag": "0004_polite_toad",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1756580935335,
+      "tag": "0005_easy_payback",
+      "breakpoints": true
     }
   ]
 }

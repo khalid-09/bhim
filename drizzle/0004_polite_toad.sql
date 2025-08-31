@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "uniq_quality_company_name" ON "quality" USING btree ("company_id","name");

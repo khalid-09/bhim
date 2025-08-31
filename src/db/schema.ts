@@ -10,7 +10,6 @@ import {
 import { relations } from "drizzle-orm";
 
 // Auth tables
-
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -209,6 +208,8 @@ export type WorkLogFromQuery = Omit<
   };
   quality: {
     id: Quality["id"];
-    name: Company["name"];
+    name: Quality["name"];
+    payableRate: Quality["payableRate"];
+    receivableRate: Quality["receivableRate"];
   };
 };
