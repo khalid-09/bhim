@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { useState, useEffect, useTransition } from "react";
 import { CheckIcon, ChevronsUpDownIcon, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -32,33 +31,50 @@ import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-
 import {
   createWorkLogSingleCompanySchema,
   createWorkLogDashboardSchema,
   type CreateWorkLogSingleCompany,
   type CreateWorkLogDashboard,
 } from "@/lib/validation/work-log";
-import { type CompanyFromQuery } from "@/db/schema";
+import { type CompanyFromQuery, type WorkLogFromQuery } from "@/db/schema";
 import { Label } from "../ui/label";
 import { createWorkLog } from "@/actions/create-work-log";
+import { editWorkLog } from "@/actions/edit-work-log";
 
 type CreateWorkLogFormProps = {
   onSuccess: () => void;
   prefilledCompany?: CompanyFromQuery;
   companies?: CompanyFromQuery[];
   mode: "single" | "dashboard";
+  workLogToEdit?: WorkLogFromQuery;
 };
 
 const CreateWorkLogForm = ({
   onSuccess,
   prefilledCompany,
   companies = [],
+  workLogToEdit,
   mode,
 }: CreateWorkLogFormProps) => {
   const [isPending, startTransition] = useTransition();
+
+  // Determine if this is edit mode
+  const isEditMode = !!workLogToEdit;
+
+  // Set initial company ID
+  const getInitialCompanyId = () => {
+    if (isEditMode && workLogToEdit) {
+      return workLogToEdit.company.id;
+    }
+    if (mode === "single" && prefilledCompany) {
+      return prefilledCompany.id;
+    }
+    return "";
+  };
+
   const [selectedCompanyId, setSelectedCompanyId] = useState<string>(
-    prefilledCompany?.id || "",
+    getInitialCompanyId(),
   );
   const [companyOpen, setCompanyOpen] = useState(false);
   const [qualityOpen, setQualityOpen] = useState(false);
@@ -68,22 +84,45 @@ const CreateWorkLogForm = ({
       ? createWorkLogSingleCompanySchema
       : createWorkLogDashboardSchema;
 
+  // Get the company to display for single mode
+  const displayCompany = isEditMode ? workLogToEdit.company : prefilledCompany;
+
   const form = useForm<CreateWorkLogSingleCompany | CreateWorkLogDashboard>({
     resolver: zodResolver(schema),
     defaultValues: {
-      date: new Date(),
-      machineNo: "",
-      taar: "",
-      karigarName: "",
-      qualityId: "",
-      ...(mode === "dashboard" && { companyId: "" }),
+      date: isEditMode && workLogToEdit ? workLogToEdit.date : new Date(),
+      machineNo: isEditMode && workLogToEdit ? workLogToEdit.machineNo : "",
+      taar: isEditMode && workLogToEdit ? workLogToEdit.taar : "",
+      karigarName: isEditMode && workLogToEdit ? workLogToEdit.karigarName : "",
+      qualityId: isEditMode && workLogToEdit ? workLogToEdit.quality.id : "",
+      ...(mode === "dashboard" && {
+        companyId: isEditMode && workLogToEdit ? workLogToEdit.company.id : "",
+      }),
     },
   });
 
+  // Get available qualities based on selected company
+  // In your CreateWorkLogForm, update the availableQualities logic:
   const availableQualities = selectedCompanyId
-    ? prefilledCompany?.qualities ||
-      companies.find((c) => c.id === selectedCompanyId)?.qualities ||
-      []
+    ? (() => {
+        // For edit mode in single company, use the company's qualities from workLogToEdit
+        if (
+          mode === "single" &&
+          isEditMode &&
+          workLogToEdit?.company?.qualities
+        ) {
+          return workLogToEdit.company.qualities;
+        }
+
+        // For create mode in single company, use prefilled company qualities
+        if (mode === "single" && prefilledCompany?.qualities) {
+          return prefilledCompany.qualities;
+        }
+
+        // For dashboard mode, find company from companies array
+        const company = companies.find((c) => c.id === selectedCompanyId);
+        return company?.qualities || [];
+      })()
     : [];
 
   const {
@@ -93,11 +132,12 @@ const CreateWorkLogForm = ({
     formState: { errors },
   } = form;
 
+  // Effect to handle company selection changes in dashboard mode
   useEffect(() => {
-    if (mode === "dashboard" && selectedCompanyId) {
+    if (mode === "dashboard" && selectedCompanyId && !isEditMode) {
       setValue("qualityId", "");
     }
-  }, [selectedCompanyId, setValue, mode]);
+  }, [selectedCompanyId, setValue, mode, isEditMode]);
 
   const onSubmit = (
     values: CreateWorkLogSingleCompany | CreateWorkLogDashboard,
@@ -106,15 +146,26 @@ const CreateWorkLogForm = ({
       try {
         const serverData = {
           ...values,
-          companyId:
-            mode === "single"
-              ? prefilledCompany!.id
+          companyId: isEditMode
+            ? workLogToEdit.company.id
+            : mode === "single"
+              ? prefilledCompany?.id || ""
               : (values as CreateWorkLogDashboard).companyId,
         };
+
+        if (isEditMode && workLogToEdit) {
+          await editWorkLog(workLogToEdit.id, serverData);
+          return;
+        }
+
         await createWorkLog(serverData);
-        onSuccess();
       } catch (error) {
-        console.error("Error creating work log:", error);
+        console.error(
+          `Error ${isEditMode ? "updating" : "creating"} work log:`,
+          error,
+        );
+      } finally {
+        onSuccess();
       }
     });
   };
@@ -122,6 +173,7 @@ const CreateWorkLogForm = ({
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 px-4 pb-4">
+        {/* Company field for dashboard mode */}
         {mode === "dashboard" && (
           <FormField
             control={control}
@@ -144,7 +196,10 @@ const CreateWorkLogForm = ({
                         {field.value
                           ? companies.find(
                               (company) => company.id === field.value,
-                            )?.name
+                            )?.name ||
+                            (isEditMode
+                              ? workLogToEdit?.company.name
+                              : "Select company...")
                           : "Select company..."}
                         <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
@@ -189,11 +244,12 @@ const CreateWorkLogForm = ({
           />
         )}
 
-        {mode === "single" && prefilledCompany && (
+        {/* Company field for single mode - always show, disabled */}
+        {mode === "single" && displayCompany && (
           <div className="w-full space-y-2">
             <Label>Company</Label>
             <Input
-              value={prefilledCompany.name}
+              value={displayCompany.name}
               disabled
               className="disabled:opacity-100"
             />
@@ -261,7 +317,10 @@ const CreateWorkLogForm = ({
                       {field.value
                         ? availableQualities.find(
                             (quality) => quality.id === field.value,
-                          )?.name
+                          )?.name ||
+                          (isEditMode
+                            ? workLogToEdit?.quality.name
+                            : "Select quality")
                         : selectedCompanyId
                           ? "Select quality"
                           : "Select company first..."}
@@ -329,7 +388,6 @@ const CreateWorkLogForm = ({
               </FormItem>
             )}
           />
-
           <FormField
             control={control}
             name="taar"
@@ -373,8 +431,8 @@ const CreateWorkLogForm = ({
         />
 
         <Button type="submit" disabled={isPending} className="w-full">
-          {isPending && <Loader2 className="mr-2 animate-spin" />} Create Work
-          Log
+          {isPending && <Loader2 className="mr-2 animate-spin" />}
+          {isEditMode ? "Update Work Log" : "Create Work Log"}
         </Button>
       </form>
     </Form>
