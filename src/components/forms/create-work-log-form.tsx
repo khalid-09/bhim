@@ -404,6 +404,8 @@ const CreateWorkLogForm = ({
                     disabled={isPending}
                     placeholder="Enter taar."
                     {...field}
+                    value={field.value ?? ""}
+                    onChange={(e) => field.onChange(e.target.value)}
                   />
                 </FormControl>
                 <FormMessage />
