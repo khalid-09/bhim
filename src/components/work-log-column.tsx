@@ -145,13 +145,35 @@ export const createWorkLogColumns = (
       filterFn: qualityFilter,
       enableSorting: false,
     },
+
+    {
+      accessorKey: "taar",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-muted-foreground text-xs font-medium tracking-wider uppercase hover:bg-inherit has-[>svg]:px-0"
+        >
+          Taar
+          <ArrowUpDownIcon className="ml-2 size-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const taar = parseFloat(row.getValue("taar"));
+        return (
+          <span className="text-sm font-medium">
+            {taar.toLocaleString("en-IN")}
+          </span>
+        );
+      },
+    },
     {
       accessorKey: "karigarName",
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="text-muted-foreground text-xs font-medium tracking-wider uppercase hover:bg-inherit has-[>svg]:px-0"
+          className="text-muted-foreground ml-auto text-xs font-medium tracking-wider uppercase hover:bg-inherit has-[>svg]:px-0"
         >
           Karigar
           <ArrowUpDownIcon className="ml-2 size-4" />
@@ -165,31 +187,6 @@ export const createWorkLogColumns = (
               {karigarName.charAt(0).toUpperCase()}
             </div>
             <span className="text-sm font-medium">{karigarName}</span>
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "taar",
-      header: ({ column }) => (
-        <div className="text-right">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="text-muted-foreground ml-auto text-xs font-medium tracking-wider uppercase hover:bg-inherit has-[>svg]:px-0"
-          >
-            Taar
-            <ArrowUpDownIcon className="ml-2 size-4" />
-          </Button>
-        </div>
-      ),
-      cell: ({ row }) => {
-        const taar = parseFloat(row.getValue("taar"));
-        return (
-          <div className="text-right">
-            <span className="text-sm font-medium">
-              {taar.toLocaleString("en-IN")}
-            </span>
           </div>
         );
       },
