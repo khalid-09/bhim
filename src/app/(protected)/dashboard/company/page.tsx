@@ -38,7 +38,7 @@ const Page = async () => {
 
   return (
     <>
-      <section className="border-border bg-card border-b px-4">
+      <section className="border-border border-b px-4">
         <div className="mx-auto max-w-7xl py-6">
           <div className="flex justify-between gap-3 max-sm:flex-col sm:items-center">
             <div>
