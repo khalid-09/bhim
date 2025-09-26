@@ -30,12 +30,16 @@ export const createWorkLog = async (data: CreateWorkLogServerSchema) => {
   try {
     await db.insert(workLog).values({
       ...parsedInput.data,
+      taar:
+        parsedInput.data.taar === "" || parsedInput.data.taar === undefined
+          ? null
+          : parsedInput.data.taar,
       userId: session.user.id,
     });
 
     revalidatePath(`/dashboard/company/${parsedInput.data.companyId}`);
   } catch (error) {
-    console.error("Error creating company:", error);
-    return { message: "Failed to create company" };
+    console.error("Error creating Work Log:", error);
+    return { message: "Failed to create work log." };
   }
 };
