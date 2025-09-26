@@ -159,10 +159,17 @@ export const createWorkLogColumns = (
         </Button>
       ),
       cell: ({ row }) => {
-        const taar = parseFloat(row.getValue("taar"));
+        const raw = row.getValue("taar");
+
+        // Only parse if raw is a string or number
+        const taar =
+          typeof raw === "string" || typeof raw === "number"
+            ? parseFloat(raw.toString())
+            : null;
+
         return (
           <span className="text-sm font-medium">
-            {taar.toLocaleString("en-IN")}
+            {taar !== null && !isNaN(taar) ? taar.toLocaleString("en-IN") : "-"}
           </span>
         );
       },
