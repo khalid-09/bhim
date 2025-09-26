@@ -110,7 +110,7 @@ export const workLog = pgTable(
     id: uuid("id").defaultRandom().primaryKey(),
     date: timestamp("date").notNull(),
     machineNo: text("machine_no").notNull(),
-    taar: decimal("taar", { precision: 10, scale: 3 }).notNull(),
+    taar: decimal("taar", { precision: 10, scale: 3 }),
     karigarName: text("karigar_name").notNull(),
     companyId: uuid("company_id")
       .notNull()
