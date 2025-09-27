@@ -107,7 +107,7 @@ export function ExportWorkLogPDF({
       ) : (
         <Download className="mr-2 size-4" />
       )}
-      "Export PDF"
+      Export PDF
     </Button>
   );
 }
