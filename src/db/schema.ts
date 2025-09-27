@@ -6,6 +6,7 @@ import {
   decimal,
   uuid,
   index,
+  integer,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -110,7 +111,7 @@ export const workLog = pgTable(
     id: uuid("id").defaultRandom().primaryKey(),
     date: timestamp("date").notNull(),
     machineNo: text("machine_no").notNull(),
-    taar: decimal("taar", { precision: 10, scale: 3 }),
+    taar: integer("taar"),
     karigarName: text("karigar_name").notNull(),
     companyId: uuid("company_id")
       .notNull()
