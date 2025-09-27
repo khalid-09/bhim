@@ -48,3 +48,12 @@ export const getQualityColor = (index: number, rowIndex: number) => {
   if (adjustedIndex === 5) return "bg-pink-100 text-pink-800 hover:bg-pink-200";
   return "bg-gray-100 text-gray-800 hover:bg-gray-200";
 };
+
+export const convertTaarToString = (
+  taar: number | null | undefined,
+): string => {
+  if (taar === null || taar === undefined) {
+    return "";
+  }
+  return taar.toString();
+};

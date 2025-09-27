@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState, useEffect, useTransition } from "react";
 import { CheckIcon, ChevronsUpDownIcon, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, convertTaarToString } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -92,7 +92,7 @@ const CreateWorkLogForm = ({
     defaultValues: {
       date: isEditMode && workLogToEdit ? workLogToEdit.date : new Date(),
       machineNo: isEditMode && workLogToEdit ? workLogToEdit.machineNo : "",
-      taar: isEditMode && workLogToEdit ? workLogToEdit.taar : "",
+      taar: isEditMode && workLogToEdit ? workLogToEdit.taar : null,
       karigarName: isEditMode && workLogToEdit ? workLogToEdit.karigarName : "",
       qualityId: isEditMode && workLogToEdit ? workLogToEdit.quality.id : "",
       ...(mode === "dashboard" && {
@@ -403,9 +403,18 @@ const CreateWorkLogForm = ({
                   <Input
                     disabled={isPending}
                     placeholder="Enter taar."
-                    {...field}
-                    value={field.value ?? ""}
-                    onChange={(e) => field.onChange(e.target.value)}
+                    value={convertTaarToString(field.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === "") {
+                        field.onChange(null);
+                      } else {
+                        const numericValue = parseInt(value, 10);
+                        field.onChange(
+                          isNaN(numericValue) ? null : numericValue,
+                        );
+                      }
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
