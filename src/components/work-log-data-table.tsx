@@ -30,13 +30,11 @@ import { useState } from "react";
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  companyName?: string;
 };
 
 export function WorkLogDataTable<TData extends WorkLogFromQuery, TValue>({
   columns,
   data,
-  companyName,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "date", desc: true }, // Default sort by date descending
@@ -65,16 +63,7 @@ export function WorkLogDataTable<TData extends WorkLogFromQuery, TValue>({
   return (
     <div className="w-full">
       <div className="border-border border-b p-6">
-        <div className="space-y-4">
-          <div className="flex w-full justify-between gap-4 max-sm:flex-col sm:items-start">
-            <div>
-              <h1 className="text-xl font-semibold">
-                {companyName ? `${companyName} Work Log` : "Work Log"}
-              </h1>
-            </div>
-          </div>
-          <WorkLogFilters table={table} data={data} />
-        </div>
+        <WorkLogFilters table={table} data={data} />
       </div>
 
       <ScrollArea className="h-fit max-w-full">
