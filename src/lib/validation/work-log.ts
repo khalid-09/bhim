@@ -5,7 +5,7 @@ import { z } from "zod";
 const baseWorkLogSchema = createInsertSchema(workLog, {
   machineNo: (schema) => schema.min(1, "Missing Mahine no."),
   karigarName: (schema) => schema.min(1, "Karigar name is required."),
-  qualityId: z.uuid({ message: "Company is required." }),
+  qualityId: z.uuid({ message: "Quality is required." }),
 }).omit({
   id: true,
   userId: true,
