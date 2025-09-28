@@ -1,9 +1,6 @@
 import AppSidebar from "@/components/app-sidebar";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import Navbar from "@/components/navbar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function ProtectedLayout({
   children,
@@ -15,7 +12,7 @@ export default function ProtectedLayout({
       <AppSidebar />
       <SidebarInset className="lg:peer-data-[variant=inset]:my-4 lg:peer-data-[variant=inset]:mr-4 lg:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-0">
         <div className="w-full">
-          <SidebarTrigger />
+          <Navbar />
           {children}
         </div>
       </SidebarInset>
