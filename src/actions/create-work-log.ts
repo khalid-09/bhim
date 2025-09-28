@@ -30,10 +30,7 @@ export const createWorkLog = async (data: CreateWorkLogServerSchema) => {
   try {
     await db.insert(workLog).values({
       ...parsedInput.data,
-      taar:
-        parsedInput.data.taar === "" || parsedInput.data.taar === undefined
-          ? null
-          : parsedInput.data.taar,
+      taar: parsedInput.data.taar ?? null,
       userId: session.user.id,
     });
 
