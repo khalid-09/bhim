@@ -1,5 +1,4 @@
 import {
-  Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
@@ -13,6 +12,7 @@ import { auth } from "@/auth";
 import { headers } from "next/headers";
 import SidebarUserNav from "./sidebar-nav-user";
 import SidebarNavigation from "./sidebar-navgation";
+import SidebarWrapper from "./sidebar-wrapper";
 
 const AppSidebar = async () => {
   const session = await auth.api.getSession({
@@ -20,10 +20,10 @@ const AppSidebar = async () => {
   });
 
   return (
-    <Sidebar collapsible="icon" variant="inset">
+    <SidebarWrapper>
       <SidebarHeader>
         <div className="flex items-center gap-2">
-          <SidebarTrigger />
+          <SidebarTrigger className="max-lg:hidden" />
           <h1 className="group-data-[state=collapsed]:hidden">BHIM</h1>
         </div>
         <SidebarSeparator className="mt-1 -ml-[1px]" />
@@ -40,7 +40,7 @@ const AppSidebar = async () => {
           <SidebarUserNav {...session.user} />
         </SidebarFooter>
       )}
-    </Sidebar>
+    </SidebarWrapper>
   );
 };
 
