@@ -30,6 +30,12 @@ const qualityFilter: FilterFn<WorkLogFromQuery> = (row, columnId, value) => {
   return quality.name.toLowerCase().includes(value.toLowerCase());
 };
 
+const companyFilter: FilterFn<WorkLogFromQuery> = (row, columnId, value) => {
+  if (!value) return true;
+  const company = row.getValue(columnId) as WorkLogFromQuery["company"];
+  return company?.name?.toLowerCase().includes(value.toLowerCase()) || false;
+};
+
 export const createWorkLogColumns = (
   mode: "single" | "dashboard" = "single",
   companies?: CompanyFromQuery[],
@@ -82,6 +88,7 @@ export const createWorkLogColumns = (
           <div className="text-sm font-medium">{company?.name || "N/A"}</div>
         );
       },
+      filterFn: companyFilter,
       sortingFn: (rowA, rowB) => {
         const companyA =
           (rowA.getValue("company") as WorkLogFromQuery["company"]).name || "";

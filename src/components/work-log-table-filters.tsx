@@ -38,6 +38,7 @@ import { Card, CardContent, CardFooter } from "./ui/card";
 interface WorkLogFiltersProps<TData extends WorkLogFromQuery> {
   table: Table<TData>;
   data: TData[];
+  mode: "single" | "dashboard";
 }
 
 export default function FilterCombobox({
@@ -70,14 +71,15 @@ export default function FilterCombobox({
               onValueChange("");
               setOpen(false);
             }}
+            className="flex w-full items-center justify-between"
           >
+            All
             <Check
               className={cn(
                 "mr-2 h-4 w-4",
                 !value ? "opacity-100" : "opacity-0",
               )}
             />
-            All
           </CommandItem>
           {options.map((option) => (
             <CommandItem
@@ -87,14 +89,15 @@ export default function FilterCombobox({
                 onValueChange(currentValue === value ? "" : currentValue);
                 setOpen(false);
               }}
+              className="flex w-full items-center justify-between"
             >
+              {option.label}
               <Check
                 className={cn(
                   "mr-2 h-4 w-4",
                   value === option.value ? "opacity-100" : "opacity-0",
                 )}
               />
-              {option.label}
             </CommandItem>
           ))}
         </CommandGroup>
@@ -160,6 +163,7 @@ export default function FilterCombobox({
 export function WorkLogFilters<TData extends WorkLogFromQuery>({
   table,
   data,
+  mode,
 }: WorkLogFiltersProps<TData>) {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -177,11 +181,22 @@ export function WorkLogFilters<TData extends WorkLogFromQuery>({
     .sort()
     .map((name) => ({ value: name, label: name }));
 
+  const uniqueCompanies = Array.from(
+    new Set(data.map((log) => log.company?.name).filter(Boolean)),
+  )
+    .sort()
+    .map((name) => ({ value: name, label: name }));
+
   // Get current filter values
   const karigarFilter = table
     .getColumn("karigarName")
     ?.getFilterValue() as string;
   const qualityFilter = table.getColumn("quality")?.getFilterValue() as string;
+  const companyFilter = (
+    mode === "dashboard"
+      ? table.getColumn("company")?.getFilterValue()
+      : undefined
+  ) as string | undefined;
 
   // Handle date range filtering
   const handleDateRangeChange = (range: DateRange | undefined) => {
@@ -246,6 +261,24 @@ export function WorkLogFilters<TData extends WorkLogFromQuery>({
           </PopoverContent>
         </Popover>
       </div>
+
+      {/* Company Filter - Only show in dashboard mode */}
+      {mode === "dashboard" && (
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Company</label>
+          <FilterCombobox
+            value={companyFilter || ""}
+            onValueChange={(value) =>
+              table.getColumn("company")?.setFilterValue(value || undefined)
+            }
+            options={uniqueCompanies}
+            placeholder="All Companies"
+            searchPlaceholder="Search companies..."
+            className="w-full"
+          />
+        </div>
+      )}
+
       {/* Karigar Filter */}
       <div className="space-y-2">
         <label className="text-sm font-medium">Karigar</label>
@@ -333,6 +366,25 @@ export function WorkLogFilters<TData extends WorkLogFromQuery>({
             </Popover>
           </div>
 
+          {/* Company Filter - Only show in dashboard mode */}
+          {mode === "dashboard" && (
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground text-sm font-medium">
+                Company:
+              </span>
+              <FilterCombobox
+                value={companyFilter || ""}
+                onValueChange={(value) =>
+                  table.getColumn("company")?.setFilterValue(value || undefined)
+                }
+                options={uniqueCompanies}
+                placeholder="All Companies"
+                searchPlaceholder="Search companies..."
+                className="min-w-[180px]"
+              />
+            </div>
+          )}
+
           {/* Karigar Filter */}
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm font-medium">
@@ -404,6 +456,20 @@ export function WorkLogFilters<TData extends WorkLogFromQuery>({
               </Badge>
             )}
 
+            {companyFilter && mode === "dashboard" && (
+              <Badge variant="secondary" className="text-xs">
+                Company: {companyFilter}
+                <button
+                  onClick={() =>
+                    table.getColumn("company")?.setFilterValue(undefined)
+                  }
+                  className="hover:bg-muted-foreground/20 ml-1 rounded-sm"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            )}
+
             {karigarFilter && (
               <Badge variant="secondary" className="text-xs">
                 Karigar: {karigarFilter}
@@ -443,7 +509,7 @@ export function WorkLogFilters<TData extends WorkLogFromQuery>({
       <div className="flex items-center justify-between">
         <Drawer open={filtersOpen} onOpenChange={setFiltersOpen}>
           <DrawerTrigger asChild>
-            <Button variant="outline" className="relative">
+            <Button variant="outline" className="relative max-sm:w-full">
               <Filter className="mr-2 h-4 w-4" />
               Filters
               {activeFiltersCount > 0 && (
@@ -490,6 +556,20 @@ export function WorkLogFilters<TData extends WorkLogFromQuery>({
               {dateRange?.to && format(dateRange.to, "MMM dd")}
               <button
                 onClick={() => handleDateRangeChange(undefined)}
+                className="hover:bg-muted-foreground/20 ml-1 rounded-sm"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          )}
+
+          {companyFilter && mode === "dashboard" && (
+            <Badge variant="secondary" className="text-xs">
+              {companyFilter}
+              <button
+                onClick={() =>
+                  table.getColumn("company")?.setFilterValue(undefined)
+                }
                 className="hover:bg-muted-foreground/20 ml-1 rounded-sm"
               >
                 <X className="h-3 w-3" />
