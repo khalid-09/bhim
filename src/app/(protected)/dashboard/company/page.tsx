@@ -16,10 +16,7 @@ const Page = async () => {
 
   const companies = await db.query.company.findMany({
     columns: {
-      userId: true,
-      name: true,
-      id: true,
-      createdAt: true,
+      updatedAt: false,
     },
     where: (company, { eq }) => eq(company.userId, session.user.id),
     with: {
