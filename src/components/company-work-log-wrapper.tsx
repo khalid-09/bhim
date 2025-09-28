@@ -1,13 +1,19 @@
 import type { User } from "better-auth";
 import { db } from "..";
 import CompanyWorkLog from "./company-work-log";
+import type { CompanyFromQuery } from "@/db/schema";
 
 type CompanyWorkLogProps = {
   user: User;
   slug: string;
+  company: CompanyFromQuery;
 };
 
-const CompanyWorkLogWrapper = async ({ user, slug }: CompanyWorkLogProps) => {
+const CompanyWorkLogWrapper = async ({
+  user,
+  slug,
+  company,
+}: CompanyWorkLogProps) => {
   const workLog = await db.query.workLog.findMany({
     columns: {
       qualityId: false,
@@ -45,7 +51,7 @@ const CompanyWorkLogWrapper = async ({ user, slug }: CompanyWorkLogProps) => {
     orderBy: (workLog, { desc }) => [desc(workLog.createdAt)],
   });
 
-  return <CompanyWorkLog workLog={workLog} />;
+  return <CompanyWorkLog workLog={workLog} company={company} />;
 };
 
 export default CompanyWorkLogWrapper;

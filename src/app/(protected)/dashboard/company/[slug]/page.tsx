@@ -69,7 +69,11 @@ const IndividualCompanyPage = async ({ params }: IndividualCompanyProps) => {
           </div>
         }
       >
-        <CompanyWorkLogWrapper user={session.user} slug={slug} />
+        <CompanyWorkLogWrapper
+          user={session.user}
+          slug={slug}
+          company={company}
+        />
       </Suspense>
     </>
   );

@@ -1,22 +1,20 @@
 "use client";
 
-import type { WorkLogFromQuery } from "@/db/schema";
+import type { CompanyFromQuery, WorkLogFromQuery } from "@/db/schema";
 import { createWorkLogColumns } from "./work-log-column";
 import { WorkLogDataTable } from "./work-log-data-table";
 import CompanyWorkLogStats from "./company-work-log-stats";
 import { ExportWorkLogPDF } from "./export-work-log-pdf";
+import DeleteMonthlyWorkLogsButton from "./delete-current-month-work-log-button";
 
 type CompanyWorkLog = {
   workLog: WorkLogFromQuery[];
+  company: CompanyFromQuery;
 };
 
-const CompanyWorkLog = ({ workLog }: CompanyWorkLog) => {
+const CompanyWorkLog = ({ workLog, company }: CompanyWorkLog) => {
+  const { name, id } = company;
   const columns = createWorkLogColumns("single");
-
-  const companyName =
-    workLog.length > 0
-      ? workLog?.[0]?.company?.name || "Unknown Company"
-      : "Unknown Company";
 
   return (
     <>
@@ -26,19 +24,24 @@ const CompanyWorkLog = ({ workLog }: CompanyWorkLog) => {
             <div className="space-y-4">
               <div className="flex w-full justify-between gap-4 max-sm:flex-col sm:items-start">
                 <div>
-                  <h1 className="text-xl font-semibold">
-                    {companyName} Work Log
-                  </h1>
+                  <h1 className="text-xl font-semibold">{name} Work Log</h1>
                 </div>
-                <ExportWorkLogPDF
-                  workLog={workLog}
-                  companyName={companyName}
-                  className="max-sm:w-full"
-                />
+                <div className="flex items-center gap-2">
+                  {id && workLog.length >= 1 && (
+                    <DeleteMonthlyWorkLogsButton companyId={id} />
+                  )}
+                  {workLog.length >= 1 && (
+                    <ExportWorkLogPDF
+                      workLog={workLog}
+                      companyName={name}
+                      className="flex-1 max-sm:w-full"
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>
-          <WorkLogDataTable columns={columns} data={workLog} />
+          <WorkLogDataTable columns={columns} data={workLog} mode="single" />
         </div>
       </section>
       <CompanyWorkLogStats workLog={workLog} />
