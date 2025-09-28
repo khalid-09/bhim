@@ -41,6 +41,7 @@ import { type CompanyFromQuery, type WorkLogFromQuery } from "@/db/schema";
 import { Label } from "../ui/label";
 import { createWorkLog } from "@/actions/create-work-log";
 import { editWorkLog } from "@/actions/edit-work-log";
+import { ScrollArea } from "../ui/scroll-area";
 
 type CreateWorkLogFormProps = {
   onSuccess: () => void;
@@ -208,31 +209,33 @@ const CreateWorkLogForm = ({
                   <PopoverContent align="start" className="w-full p-0">
                     <Command>
                       <CommandInput placeholder="Search company" />
-                      <CommandList>
+                      <CommandList className="max-h-none overflow-hidden">
                         <CommandEmpty>No company found.</CommandEmpty>
                         <CommandGroup>
-                          {companies.map((company) => (
-                            <CommandItem
-                              className="flex items-center justify-between"
-                              key={company.id}
-                              value={company.name}
-                              onSelect={() => {
-                                field.onChange(company.id);
-                                setSelectedCompanyId(company.id);
-                                setCompanyOpen(false);
-                              }}
-                            >
-                              {company.name}
-                              <CheckIcon
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  company.id === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0",
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
+                          <ScrollArea className="h-[200px]">
+                            {companies.map((company) => (
+                              <CommandItem
+                                className="flex items-center justify-between"
+                                key={company.id}
+                                value={company.name}
+                                onSelect={() => {
+                                  field.onChange(company.id);
+                                  setSelectedCompanyId(company.id);
+                                  setCompanyOpen(false);
+                                }}
+                              >
+                                {company.name}
+                                <CheckIcon
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    company.id === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0",
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </ScrollArea>
                         </CommandGroup>
                       </CommandList>
                     </Command>
